@@ -1,0 +1,16 @@
+{
+    "name": "mm/sadle",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SAdle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Miloš Milinković",
+            "email": "112415637+milinkovicmilos@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
