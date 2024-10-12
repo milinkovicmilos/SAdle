@@ -23,7 +23,7 @@ switch ($method) {
         include_once VIEWSPATH . '/Fixed/header.php';
 
         if ($route == '/')
-            $route = '/index';
+            $route = '/vehicle';
 
         $page = VIEWSPATH . $route . '.php';
         if (file_exists($page))
