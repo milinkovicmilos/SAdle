@@ -1,5 +1,7 @@
 <?php
 
+require_once '../../vendor/autoload.php';
+
 const VIEWSPATH = '../Views';
 
 $request = $_SERVER['REQUEST_URI'];
