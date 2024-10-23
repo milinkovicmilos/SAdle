@@ -3,3 +3,6 @@
 
 # Env files
 /app/Config/Envs/
+
+# Data
+/app/Data/
