@@ -2,7 +2,9 @@
 
 require_once '../../vendor/autoload.php';
 
-const VIEWSPATH = '../Views';
+const VIEWSPATH = '../Views/';
+const CONTROLLERSPATH = '../Controllers/';
+const CONTROLLERSNAMESPACE = 'App\\Controllers\\';
 
 $request = $_SERVER['REQUEST_URI'];
 $route = strtok($request, '?');
@@ -19,19 +21,41 @@ if (!empty($queryString)) {
 $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
-        include_once VIEWSPATH . '/Fixed/head.php';
-        include_once VIEWSPATH . '/Fixed/header.php';
+        $route = strtok($route, '/');
+        $controller = CONTROLLERSPATH . $route . 'Controller.php';
+        if (file_exists($controller)) {
+            $controllerName = CONTROLLERSNAMESPACE . $route . 'Controller';
+            if (class_exists($controllerName))
+                $controller = new $controllerName();
+            else {
+                http_response_code(400);
+                exit();
+            }
 
-        if ($route == '/')
-            $route = '/vehicle';
+            $call = strtok('/');
+            if (method_exists($controllerName, $call))
+                $controller->$call();
+            else {
+                http_response_code(400);
+                exit();
+            }
+
+            break;
+        }
+
+        include_once VIEWSPATH . 'Fixed/head.php';
+        include_once VIEWSPATH . 'Fixed/header.php';
+
+        if ($route == '')
+            $route = 'vehicle';
 
         $page = VIEWSPATH . $route . '.php';
         if (file_exists($page))
             include_once $page;
         else
-            include_once VIEWSPATH . '/404.php';
+            include_once VIEWSPATH . '404.php';
 
-        include_once VIEWSPATH . '/Fixed/footer.php';
+        include_once VIEWSPATH . 'Fixed/footer.php';
         break;
 
     case 'POST':
