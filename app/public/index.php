@@ -24,12 +24,12 @@ $router = new Router();
 
 $route = strtok($route, '/');
 if ($route == '')
-    $route = 'song';
+    $route = 'radio';
 
-$res = $router->MatchRoute(RequestMethod::from($method), $route);
+$res = $router->matchRoute(RequestMethod::from($method), $route);
 if ($res) {
     try {
-        $router->InvokeControllerMethod(...$res);
+        $router->invokeControllerMethod(...$res);
     } catch (Exception $ex) {
         http_response_code(500);
         exit("Error...");

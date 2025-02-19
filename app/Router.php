@@ -14,7 +14,7 @@ class Router
         $this->routes = [];
     }
 
-    public function AddRoute(RequestMethod $method, string $route, string $controller, string $action): void
+    public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void
     {
         $this->routes[] = (object)[
             "method" => $method,
@@ -24,7 +24,7 @@ class Router
         ];
     }
 
-    public function MatchRoute(RequestMethod $method, string $route): array | bool
+    public function matchRoute(RequestMethod $method, string $route): array | bool
     {
         foreach ($this->routes as $routeObj) {
             if ($routeObj->method == $method && $routeObj->route == $route) {
@@ -34,13 +34,13 @@ class Router
         return false;
     }
 
-    public function Invoke(RequestMethod $method, string $route): void
+    public function invoke(RequestMethod $method, string $route): void
     {
         list($controller, $actionMethod) = $this->MatchRoute($method, $route);
         $this->Invoke($controller, $actionMethod);
     }
 
-    public function InvokeControllerMethod(string $controller, string $actionMethod)
+    public function invokeControllerMethod(string $controller, string $actionMethod)
     {
         if (empty($controller) || empty($actionMethod))
             throw new Exception("Invalid Route.");
