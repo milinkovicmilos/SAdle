@@ -1,11 +1,13 @@
 <?php
 
+use App\Router;
+use App\Enums\RequestMethod;
+
 require_once '../../vendor/autoload.php';
 
 const VIEWSPATH = '../Views/';
-const CONTROLLERSPATH = '../Controllers/';
-const CONTROLLERSNAMESPACE = 'App\\Controllers\\';
 
+$method = $_SERVER['REQUEST_METHOD'];
 $request = $_SERVER['REQUEST_URI'];
 $route = strtok($request, '?');
 $queryString = strtok('');
@@ -18,46 +20,38 @@ if (!empty($queryString)) {
     }
 }
 
-$method = $_SERVER['REQUEST_METHOD'];
-switch ($method) {
-    case 'GET':
-        $route = strtok($route, '/');
-        $controller = CONTROLLERSPATH . $route . 'Controller.php';
-        if (file_exists($controller)) {
-            $controllerName = CONTROLLERSNAMESPACE . $route . 'Controller';
-            if (class_exists($controllerName))
-                $controller = new $controllerName();
-            else {
-                http_response_code(400);
-                exit();
-            }
+$router = new Router();
 
-            $call = strtok('/');
-            if (method_exists($controllerName, $call))
-                $controller->$call();
-            else {
-                http_response_code(400);
-                exit();
-            }
+$route = strtok($route, '/');
+if ($route == '')
+    $route = 'song';
 
-            break;
-        }
+$res = $router->MatchRoute(RequestMethod::from($method), $route);
+if ($res) {
+    try {
+        $router->InvokeControllerMethod(...$res);
+    } catch (Exception $ex) {
+        http_response_code(500);
+        exit("Error...");
+    } catch (Error $err) {
+        http_response_code(500);
+        exit("Error...");
+    }
+} else {
+    $page = VIEWSPATH . $route . '.php';
 
+    if ($method == "GET") {
         include_once VIEWSPATH . 'Fixed/head.php';
         include_once VIEWSPATH . 'Fixed/header.php';
 
-        if ($route == '')
-            $route = 'vehicle';
-
-        $page = VIEWSPATH . $route . '.php';
         if (file_exists($page))
             include_once $page;
         else
             include_once VIEWSPATH . '404.php';
 
         include_once VIEWSPATH . 'Fixed/footer.php';
-        break;
-
-    case 'POST':
-        break;
+    } else {
+        http_response_code(400);
+        exit();
+    }
 }
