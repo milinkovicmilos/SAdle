@@ -30,4 +30,15 @@ class DBHandler
     {
         return $this->db->prepare($query)->execute($data);
     }
+
+    public function fetchPrepared(string $query, array $data): array
+    {
+        $stmt = $this->db->prepare($query);
+        try {
+            $stmt->execute($data);
+        } catch (\PDOException $e) {
+            echo $e;
+        }
+        return $stmt->fetchAll();
+    }
 }
