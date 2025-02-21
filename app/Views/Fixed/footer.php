@@ -1,5 +1,5 @@
-<container>
-    <footer>
+<footer>
+    <div class="container py-3">
         <p class="text-center">SAdle</p>
-    </footer>
-</container>
+    </div>
+</footer>
