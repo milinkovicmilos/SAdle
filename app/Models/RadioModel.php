@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\RadioGamesModel;
-
 class RadioModel extends Model
 {
     public function retrieveRadioStations(): array
@@ -13,13 +11,13 @@ class RadioModel extends Model
 
     public function retrieveRadioSongName(): string
     {
-        $songId = (new GamesModel())->retrieveActiveSongId();
+        $songId = (new GameModel())->retrieveActiveSongId();
         return $this->dbc->query("SELECT name FROM songs WHERE id = $songId")[0]->name;
     }
 
     public function retrieveAuthorName(): string
     {
-        $songId = (new GamesModel())->retrieveActiveSongId();
+        $songId = (new GameModel())->retrieveActiveSongId();
         return $this->dbc->query("SELECT author_name FROM songs WHERE id = $songId")[0]->author_name;
     }
 }

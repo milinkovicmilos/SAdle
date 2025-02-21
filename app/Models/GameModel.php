@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
-class GamesModel extends Model
+class GameModel extends Model
 {
+    public function retrieveCurrentDate(): string
+    {
+        return date("Y-m-d");
+    }
+
     public function retrieveActiveSongId(): int
     {
         // Get todays song id
