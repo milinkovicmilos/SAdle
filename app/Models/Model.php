@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Config\DBHandler;
 
-abstract class BaseModel
+abstract class Model
 {
     protected readonly DBHandler $dbc;
 
