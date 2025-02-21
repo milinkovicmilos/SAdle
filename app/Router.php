@@ -12,6 +12,9 @@ class Router
     public function __construct()
     {
         $this->routes = [];
+        $this->addRoute(RequestMethod::GET, "GetRadioStations", \App\Controllers\RadioController::class, "getRadioStations");
+        $this->addRoute(RequestMethod::GET, "GetSongName", \App\Controllers\RadioController::class, "getSongName");
+        $this->addRoute(RequestMethod::GET, "GetAuthorName", \App\Controllers\RadioController::class, "getAuthorName");
     }
 
     public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void
