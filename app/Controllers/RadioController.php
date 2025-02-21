@@ -17,7 +17,7 @@ class RadioController extends Controller
     {
         try {
             $data = $this->model->retrieveRadioStations();
-        } catch (\PDOException $ex) {
+        } catch (\PDOException | \Exception | \Error $e) {
             $data = [
                 "message" => "Error while retrieving data."
             ];
@@ -34,7 +34,7 @@ class RadioController extends Controller
             $data = [
                 "name" => $data
             ];
-        } catch (\PDOException $ex) {
+        } catch (\PDOException | \Exception | \Error $e) {
             $data = [
                 "message" => "Error while retrieving data."
             ];
@@ -51,7 +51,7 @@ class RadioController extends Controller
             $data = [
                 "name" => $data
             ];
-        } catch (\PDOException $ex) {
+        } catch (\PDOException | \Exception | \Error $e) {
             $data = [
                 "message" => "Error while retrieving data."
             ];

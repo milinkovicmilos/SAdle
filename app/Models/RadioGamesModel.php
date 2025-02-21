@@ -8,6 +8,10 @@ class RadioGamesModel extends Model
     {
         // Get todays song id
         $currentDate = date("Y-m-d");
-        return $this->dbc->fetchPrepared("SELECT song_id FROM radio_games WHERE game_date = ?", [$currentDate])[0]->song_id;
+        $result = $this->dbc->fetchPrepared("SELECT song_id FROM radio_games WHERE game_date = ?", [$currentDate])[0]->song_id;
+        if (is_null($result))
+            throw new \Exception("Radio game song id for today is null.");
+
+        return $result;
     }
 }
