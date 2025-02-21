@@ -6,5 +6,4 @@ enum RequestMethod: string
 {
     case GET = "GET";
     case POST = "POST";
-    case UPDATE = "UPDATE";
 }
