@@ -46,4 +46,21 @@ class SongController extends Controller
         header("Content-type: application/json");
         echo json_encode($data);
     }
+
+    public function getVideoId(): void
+    {
+        try {
+            $data = $this->model->retrieveVideoId();
+            $data = [
+                "video_id" => $data
+            ];
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error while retrieving data."
+            ];
+            http_response_code(500);
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
 }

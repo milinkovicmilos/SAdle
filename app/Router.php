@@ -16,6 +16,7 @@ class Router
         $this->addRoute(RequestMethod::GET, "GetRadioStations", \App\Controllers\RadioController::class, "getRadioStations");
         $this->addRoute(RequestMethod::GET, "GetSongName", \App\Controllers\SongController::class, "getSongName");
         $this->addRoute(RequestMethod::GET, "GetAuthorName", \App\Controllers\SongController::class, "getAuthorName");
+        $this->addRoute(RequestMethod::GET, "GetVideoId", \App\Controllers\SongController::class, "getVideoId");
     }
 
     public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void
