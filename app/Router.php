@@ -12,11 +12,11 @@ class Router
     public function __construct()
     {
         $this->routes = [];
-        $this->addRoute(RequestMethod::GET, "GetCurrentDate", \App\Controllers\GameController::class, "getCurrentDate");
-        $this->addRoute(RequestMethod::GET, "GetRadioStations", \App\Controllers\RadioController::class, "getRadioStations");
-        $this->addRoute(RequestMethod::GET, "GetSongName", \App\Controllers\SongController::class, "getSongName");
-        $this->addRoute(RequestMethod::GET, "GetAuthorName", \App\Controllers\SongController::class, "getAuthorName");
-        $this->addRoute(RequestMethod::GET, "GetVideoId", \App\Controllers\SongController::class, "getVideoId");
+        $this->addRoute(RequestMethod::GET, "/GetCurrentDate", \App\Controllers\GameController::class, "getCurrentDate");
+        $this->addRoute(RequestMethod::POST, "/RadioGuess", \App\Controllers\GameController::class, "radioGuess");
+        $this->addRoute(RequestMethod::GET, "/GetRadioStations", \App\Controllers\RadioController::class, "getRadioStations");
+        $this->addRoute(RequestMethod::GET, "/GetSongName", \App\Controllers\SongController::class, "getSongName");
+        $this->addRoute(RequestMethod::GET, "/GetAuthorName", \App\Controllers\SongController::class, "getAuthorName");
     }
 
     public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void

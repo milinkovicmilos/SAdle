@@ -9,36 +9,25 @@ const VIEWSPATH = '../Views/';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $request = $_SERVER['REQUEST_URI'];
-$route = strtok($request, '?');
-$queryString = strtok('');
-
-$queryParams = [];
-if (!empty($queryString)) {
-    foreach (explode('&', $queryString) as $value) {
-        list($param, $val) = explode('=', $value);
-        $queryParams[$param] = $val;
-    }
-}
+$route = explode('?', $request)[0];
 
 $router = new Router();
 
-$route = strtok($route, '/');
-if ($route == '')
-    $route = 'radio';
+if ($route == '/')
+    $route = '/radio';
 
 $res = $router->matchRoute(RequestMethod::from($method), $route);
 if ($res) {
     try {
         $router->invokeControllerMethod(...$res);
-    } catch (Exception $ex) {
-        http_response_code(500);
-        exit("Error...");
-    } catch (Error $err) {
+    } catch (Exception | Error $e) {
+        echo $e;
         http_response_code(500);
         exit("Error...");
     }
 } else {
-    $page = VIEWSPATH . $route . '.php';
+    $pageName = explode('/', $route)[1];
+    $page = VIEWSPATH . $pageName . '.php';
 
     if ($method == "GET") {
         include_once VIEWSPATH . 'Fixed/head.php';
