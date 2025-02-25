@@ -3,20 +3,24 @@
 namespace App\Controllers;
 
 use App\Models\SongModel;
+use App\Models\GameModel;
 
 class SongController extends Controller
 {
     private SongModel $model;
+    private GameModel $gameModel;
 
     public function __construct()
     {
         $this->model = new SongModel();
+        $this->gameModel = new GameModel();
     }
 
     public function getSongName(): void
     {
         try {
-            $data = $this->model->retrieveRadioSongName();
+            $songId = $this->gameModel->retrieveActiveSongId();
+            $data = $this->model->retrieveRadioSongName($songId);
             $data = [
                 "name" => $data
             ];
@@ -33,7 +37,8 @@ class SongController extends Controller
     public function getAuthorName(): void
     {
         try {
-            $data = $this->model->retrieveAuthorName();
+            $songId = $this->gameModel->retrieveActiveSongId();
+            $data = $this->model->retrieveAuthorName($songId);
             $data = [
                 "name" => $data
             ];
@@ -50,7 +55,8 @@ class SongController extends Controller
     public function getVideoId(): void
     {
         try {
-            $data = $this->model->retrieveVideoId();
+            $songId = $this->gameModel->retrieveActiveSongId();
+            $data = $this->model->retrieveVideoId($songId);
             $data = [
                 "video_id" => $data
             ];
