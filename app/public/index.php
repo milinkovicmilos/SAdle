@@ -26,7 +26,7 @@ if ($res) {
         exit("Error...");
     }
 } else {
-    $pageName = explode('/', $route)[1];
+    $pageName = substr($route, 1);
     $page = VIEWSPATH . $pageName . '.php';
 
     if ($method == "GET") {
