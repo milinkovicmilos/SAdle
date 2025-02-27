@@ -9,7 +9,7 @@ class DBHandler
     public function __construct()
     {
         $envData = EnvReader::getEnvData();
-        $dsn = "{$envData['DBTYPE']}:host={$envData['HOST']};dbname={$envData['DBNAME']}";
+        $dsn = "mysql:host={$envData['HOST']};dbname={$envData['DBNAME']}";
 
         $this->db = new \PDO($dsn, $envData['USERNAME'], $envData['PASSWORD']);
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
