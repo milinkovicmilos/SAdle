@@ -8,7 +8,7 @@ if [[ $ANSWER = "N" || $ANSWER = "n" ]]; then
     exit 1
 fi
 
-FILE = "../app/Config/Envs/.env"
+FILE="../app/Config/Envs/.env"
 
 DBNAME=$(grep -oP '^DBNAME=\K.*' "$FILE")
 USERNAME=$(grep -oP '^USERNAME=\K.*' "$FILE")

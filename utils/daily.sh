@@ -1,8 +1,10 @@
 #! /bin/bash
 
-DBNAME=$(grep -oP '^DBNAME=\K.*' "$file")
-USERNAME=$(grep -oP '^USERNAME=\K.*' "$file")
-PASSWORD=$(grep -oP '^PASSWORD=\K.*' "$file")
+FILE="../app/Config/Envs/.env"
+
+DBNAME=$(grep -oP '^DBNAME=\K.*' "$FILE")
+USERNAME=$(grep -oP '^USERNAME=\K.*' "$FILE")
+PASSWORD=$(grep -oP '^PASSWORD=\K.*' "$FILE")
 
 mariadb -u $USERNAME --password=$PASSWORD $DBNAME < add_game.sql
 
