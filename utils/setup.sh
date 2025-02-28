@@ -49,14 +49,14 @@ if [ ! -d ../app/Config/Envs ]; then
 fi
 
 echo "Generating .env file..."
-echo "DBTYPE=mysql\n" >> ../app/Config/Envs/.env
-echo "DBNAME=$DBNAME\n" > ../app/Config/Envs/.env
-echo "HOST=$HOST\n" > ../app/Config/Envs/.env
+echo "DBTYPE=mysql" > ../app/Config/Envs/.env
+echo "DBNAME=$DBNAME" >> ../app/Config/Envs/.env
+echo "HOST=$HOST" >> ../app/Config/Envs/.env
 read -p "Enter MariaDB username for .env: " USERNAME
-echo "USERNAME=$USERNAME\n" > ../app/Config/Envs/.env
+echo "USERNAME=$USERNAME" >> ../app/Config/Envs/.env
 read -s -p "Enter password: " PASSWORD
 echo
-echo "PASSWORD=$PASSWORD\n" > ../app/Config/Envs/.env
+echo "PASSWORD=$PASSWORD" >> ../app/Config/Envs/.env
 
 echo "Make sure to populate the tables then run start_games.sh"
 echo "Exiting..."
