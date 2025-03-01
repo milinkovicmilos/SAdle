@@ -9,6 +9,11 @@ class GameModel extends Model
         return date("Y-m-d");
     }
 
+    public function retrieveSecondsToNextDay(): int
+    {
+        return strtotime("tomorrow") - time();
+    }
+
     public function retrieveActiveSongId(): int
     {
         // Get todays song id

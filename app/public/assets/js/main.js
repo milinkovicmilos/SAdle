@@ -73,11 +73,11 @@ const setupGame = function() {
             const localStorageDate = getLocalStorageGameDate();
 
             if (serverDate > localStorageDate || localStorageDate == null) {
-                setGameStatus(false);
-                setLocalStorageGameDate(date);
-                resetCluesInLocalStorage();
-                resetGuessesInLocalStorage();
+                resetGame(date);
             }
+
+            renderTimer(json.timeToNextDay);
+            setTimeout(() => { location.reload(); }, json.timeToNextDay * 1000);
         })
         .catch(() => {
             displayError("Error while fetching game data... Please try again later.");
@@ -145,6 +145,13 @@ const displayError = function(errorText) {
     }
 }
 
+const resetGame = function(gameDate) {
+    setGameStatus(false);
+    setLocalStorageGameDate(gameDate);
+    resetCluesInLocalStorage();
+    resetGuessesInLocalStorage();
+}
+
 const markActiveLink = function() {
     const linksUl = document.querySelector("header div ul");
     for (const li of linksUl.children) {
@@ -153,6 +160,26 @@ const markActiveLink = function() {
             anchor.classList.add("active");
         }
     }
+}
+
+const renderTimer = function(time) {
+    if (time <= 0) {
+        return;
+    }
+
+    const hours = Math.floor(time / 3600) % 60;
+    const minutes = Math.floor(time / 60) % 60;
+    const seconds = time % 60;
+
+    const hoursString = String(hours).padStart(2, '0');
+    const minutesString = String(minutes).padStart(2, '0');
+    const secondsString = String(seconds).padStart(2, '0');
+
+    const text = `${hoursString}:${minutesString}:${secondsString}`;
+    const timerElement = document.querySelector("#timer");
+    timerElement.textContent = text;
+
+    setTimeout(() => { renderTimer(--time); }, 1000);
 }
 
 // Basic setup for every minigame

@@ -18,9 +18,11 @@ class GameController extends Controller
     public function getCurrentDate()
     {
         try {
-            $data = $this->model->retrieveCurrentDate();
+            $currentDate = $this->model->retrieveCurrentDate();
+            $timeToNextDay = $this->model->retrieveSecondsToNextDay();
             $data = [
-                "date" => $data
+                "date" => $currentDate,
+                "timeToNextDay" => $timeToNextDay,
             ];
         } catch (\Exception | \Error $e) {
             $data = [

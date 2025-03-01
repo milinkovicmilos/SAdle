@@ -98,7 +98,7 @@ const submitRadioGuess = function() {
             }
             renderGuess(selectedOption.textContent, json.correct);
             for (const clueObj of json.clues) {
-                addClueToLocalStorage(clueObj);
+                addClueToLocalStorage();
                 renderClue(clueObj);
             }
         })
