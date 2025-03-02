@@ -43,8 +43,8 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-echo "Making Envs directory..."
 if [ ! -d ../app/Config/Envs ]; then
+    echo "Making Envs directory..."
     mkdir ../app/Config/Envs
 fi
 
