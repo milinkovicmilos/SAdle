@@ -234,6 +234,10 @@ const InitializePageRefresh = function() {
 
                 countdownTimer(json.timeToNextDay);
                 setTimeout(() => { InitializePageRefresh(); }, json.timeToNextDay * 1000);
+            })
+            .catch(() => {
+                displayError("Error while fetching game data... Please try again later.");
+                return;
             });
     }, 1000);
 }
