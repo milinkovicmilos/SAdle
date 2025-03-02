@@ -6,7 +6,6 @@ class GameModel extends Model
 {
     public function retrieveCurrentDate(): string
     {
-        date_default_timezone_set('Asia/Dhaka');
         return date("Y-m-d");
     }
 
