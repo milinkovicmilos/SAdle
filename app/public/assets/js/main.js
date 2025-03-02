@@ -9,6 +9,17 @@ const getGameName = function() {
 
 const GAME = getGameName();
 
+// These are game functions for fetching the game specific data and starting it
+const STARTFUNCTIONS = {
+    "radio": radioStart,
+};
+
+// These are game functions that reset the
+// page stateto the one originally sent by the server
+const RESETFUNCTIONS = {
+    "radio": radioReset,
+};
+
 const getJSON = async function(url) {
     try {
         const request = await fetch(url, {
@@ -65,24 +76,36 @@ const getGameStatus = function() {
     return getLocalStorage(`${getGameName()}Beaten`) == "true";
 }
 
+const setAutoRefreshLocalStorage = function(value) {
+    setLocalStorage("autoRefresh", value);
+}
+
+const getAutoRefreshLocalStorage = function() {
+    return getLocalStorage("autoRefresh") == "true";
+}
+
 const setupGame = function() {
-    getJSON("GetCurrentDate")
-        .then((json) => {
-            const date = json.date;
-            const serverDate = new Date(date);
-            const localStorageDate = getLocalStorageGameDate();
+    if (!getAutoRefreshLocalStorage()) {
+        getJSON("GetCurrentDate")
+            .then((json) => {
+                const date = json.date;
+                const serverDate = new Date(date);
+                const localStorageDate = getLocalStorageGameDate();
 
-            if (serverDate > localStorageDate || localStorageDate == null) {
-                resetGame(date);
-            }
+                if (serverDate > localStorageDate || localStorageDate == null) {
+                    resetLocalStorageGameData(date);
+                }
 
-            renderTimer(json.timeToNextDay);
-            setTimeout(() => { location.reload(); }, json.timeToNextDay * 1000);
-        })
-        .catch(() => {
-            displayError("Error while fetching game data... Please try again later.");
-            return;
-        });
+                countdownTimer(json.timeToNextDay);
+                setTimeout(() => { InitializePageRefresh(); }, json.timeToNextDay * 1000);
+            })
+            .catch(() => {
+                displayError("Error while fetching game data... Please try again later.");
+                return;
+            });
+    }
+    setAutoRefreshLocalStorage(false);
+    STARTFUNCTIONS[GAME]();
 }
 
 const getLocalStorageGameDate = function() {
@@ -99,6 +122,16 @@ const getCluesFromLocalStorage = function() {
         return [];
     }
     return JSON.parse(clues);
+}
+
+const checkIfClueExistsInLocalStorage = function(clueObj) {
+    const clues = getCluesFromLocalStorage();
+    for (const clue of clues) {
+        if (clue.elementId == clueObj.elementId && clue.value == clueObj.value) {
+            return true;
+        }
+    }
+    return false;
 }
 
 const addClueToLocalStorage = function(clueObj) {
@@ -145,7 +178,7 @@ const displayError = function(errorText) {
     }
 }
 
-const resetGame = function(gameDate) {
+const resetLocalStorageGameData = function(gameDate) {
     setGameStatus(false);
     setLocalStorageGameDate(gameDate);
     resetCluesInLocalStorage();
@@ -162,12 +195,17 @@ const markActiveLink = function() {
     }
 }
 
-const renderTimer = function(time) {
+const countdownTimer = function(time) {
     if (time <= 0) {
         return;
     }
 
-    const hours = Math.floor(time / 3600) % 60;
+    renderTimer(time);
+    setTimeout(() => { countdownTimer(--time); }, 1000);
+}
+
+const renderTimer = async function(time) {
+    const hours = Math.floor(time / 3600);
     const minutes = Math.floor(time / 60) % 60;
     const seconds = time % 60;
 
@@ -178,11 +216,29 @@ const renderTimer = function(time) {
     const text = `${hoursString}:${minutesString}:${secondsString}`;
     const timerElement = document.querySelector("#timer");
     timerElement.textContent = text;
-
-    setTimeout(() => { renderTimer(--time); }, 1000);
 }
 
-// Basic setup for every minigame
+const InitializePageRefresh = function() {
+    const interval = setInterval(() => {
+        getJSON("GetCurrentDate")
+            .then((json) => {
+                const date = new Date(json.date);
+                const localDate = getLocalStorageGameDate();
+                if (date > localDate) {
+                    clearInterval(interval);
+                    resetLocalStorageGameData(json.date);
+                    RESETFUNCTIONS[GAME]();
+                    setAutoRefreshLocalStorage(true);
+                    setupGame();
+                }
+
+                countdownTimer(json.timeToNextDay);
+                setTimeout(() => { InitializePageRefresh(); }, json.timeToNextDay * 1000);
+            });
+    }, 1000);
+}
+
+// Initialize Basic setup and call the start game function
 setupGame();
 
 // Mark the active link in header

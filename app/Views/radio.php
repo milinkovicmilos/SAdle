@@ -6,5 +6,5 @@
     <p class="text-center mt-3 mb-0">Time to next game:</p>
     <p id="timer" class="text-center"></p>
 </div>
-<script src="assets/js/main.js"></script>
 <script src="assets/js/radio.js"></script>
+<script src="assets/js/main.js"></script>
