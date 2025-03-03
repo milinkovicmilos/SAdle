@@ -97,7 +97,6 @@ const setupGame = function() {
                 }
 
                 countdownTimer(json.timeToNextDay);
-                setTimeout(() => { InitializePageRefresh(); }, json.timeToNextDay * 1000);
             })
             .catch(() => {
                 displayError("Error while fetching game data... Please try again later.");
@@ -197,6 +196,7 @@ const markActiveLink = function() {
 
 const countdownTimer = function(time) {
     if (time <= 0) {
+        InitializePageRefresh();
         return;
     }
 
@@ -233,7 +233,6 @@ const InitializePageRefresh = function() {
                 }
 
                 countdownTimer(json.timeToNextDay);
-                setTimeout(() => { InitializePageRefresh(); }, json.timeToNextDay * 1000);
             })
             .catch(() => {
                 displayError("Error while fetching game data... Please try again later.");
