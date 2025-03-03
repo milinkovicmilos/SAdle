@@ -11,3 +11,6 @@
 # setup.sh generated SQL Script files
 /utils/add_game.sql
 /utils/add_starting_games.sql
+
+# Sitemap
+/app/public/sitemap.xml

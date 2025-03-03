@@ -1,12 +1,17 @@
 #! /bin/bash
 
-FILE="../app/Config/Envs/.env"
+DIR=$(dirname "$(realpath $0)")
+ENVFILE=$DIR/../app/Config/Envs/.env
 
-DBNAME=$(grep -oP '^DBNAME=\K.*' "$FILE")
-USERNAME=$(grep -oP '^USERNAME=\K.*' "$FILE")
-PASSWORD=$(grep -oP '^PASSWORD=\K.*' "$FILE")
+DBNAME=$(grep -oP '^DBNAME=\K.*' "$ENVFILE")
+USERNAME=$(grep -oP '^USERNAME=\K.*' "$ENVFILE")
+PASSWORD=$(grep -oP '^PASSWORD=\K.*' "$ENVFILE")
 
-mariadb -u $USERNAME --password=$PASSWORD $DBNAME < add_game.sql
+mariadb -u $USERNAME --password=$PASSWORD $DBNAME < $DIR/add_game.sql
+echo "Added game for tommorow."
 
-echo "Added game for tommorow. Exiting..."
+SCRIPT=$DIR/sitemap_generator.php
+php $SCRIPT
+
+echo "Generated sitemap. Exiting..."
 exit 0
