@@ -35,7 +35,6 @@ const getJSON = async function(url) {
     }
     catch (error) {
         // Display message to user
-        console.log(`Get request error : ${error}`);
     }
 }
 
@@ -55,7 +54,6 @@ const postJSON = async function(url, data) {
     }
     catch (error) {
         // Display message to user
-        console.log(`Get request error : ${error}`);
     }
 }
 
