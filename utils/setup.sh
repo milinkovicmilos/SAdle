@@ -28,8 +28,8 @@ read -p "Enter desired database name: " DBNAME
 mariadb -h $HOST -u $USERNAME --password=$PASSWORD -e "CREATE DATABASE $DBNAME;"
 cp template_add_game.sql add_game.sql
 cp template_add_starting_games.sql add_starting_games.sql
-sed -i 's/$DBNAME/sadle_db/' add_game.sql
-sed -i 's/$DBNAME/sadle_db/' add_starting_games.sql
+sed -i "s/\$DBNAME/$DBNAME/" add_game.sql
+sed -i "s/\$DBNAME/$DBNAME/" add_starting_games.sql
 
 if [ $? != 0 ]; then 
     echo "MariaDB error..."
