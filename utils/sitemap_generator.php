@@ -32,6 +32,12 @@ XML;
 
 $urlset = new SimpleXMLElement($xml);
 
+$url = $urlset->addChild("url");
+$url->addChild("loc", "https://$fullDomain/");
+$url->addChild("lastmod", date("Y-m-d"));
+$url->addChild("priority", "0.8");
+$url->addChild("changefreq", "daily");
+
 foreach ($files as $fileName) {
     if (in_array($fileName, $ignoreFiles)) {
         continue;
