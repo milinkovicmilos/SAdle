@@ -57,6 +57,8 @@ echo "USERNAME=$USERNAME" >> ../app/Config/Envs/.env
 read -s -p "Enter password: " PASSWORD
 echo
 echo "PASSWORD=$PASSWORD" >> ../app/Config/Envs/.env
+read -p "Enter full domain name (ex. example.com): " FULLDOMAIN
+echo "FULLDOMAIN=$FULLDOMAIN" >> ../app/Config/Envs/.env
 
 echo "Make sure to populate the tables then run start_games.sh"
 echo "Exiting..."
