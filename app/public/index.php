@@ -21,7 +21,6 @@ if ($res) {
     try {
         $router->invokeControllerMethod(...$res);
     } catch (Exception | Error $e) {
-        echo $e;
         http_response_code(500);
         exit("Error...");
     }
