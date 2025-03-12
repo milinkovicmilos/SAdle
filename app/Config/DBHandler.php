@@ -37,7 +37,6 @@ class DBHandler
         try {
             $stmt->execute($data);
         } catch (\PDOException $e) {
-            echo $e;
         }
         return $stmt->fetchAll();
     }
