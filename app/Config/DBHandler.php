@@ -34,10 +34,7 @@ class DBHandler
     public function fetchPrepared(string $query, array $data): array
     {
         $stmt = $this->db->prepare($query);
-        try {
-            $stmt->execute($data);
-        } catch (\PDOException $e) {
-        }
+        $stmt->execute($data);
         return $stmt->fetchAll();
     }
 }
