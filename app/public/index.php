@@ -13,6 +13,20 @@ $route = explode('?', $request)[0];
 
 $router = new Router();
 
+$nonce = base64_encode(random_bytes(16));
+$csp = <<<CSP
+Content-Security-Policy: 
+    default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://www.youtube.com; 
+    script-src 'self' 'nonce-$nonce' https://www.youtube.com ; 
+    frame-src 'self' https://www.youtube.com ; 
+    img-src 'self' https://i.ytimg.com data: ; 
+    object-src 'none'; 
+    frame-ancestors 'none'; 
+    font-src 'self' https://cdn.jsdelivr.net; 
+    connect-src 'self';
+CSP;
+header($csp);
+
 if ($route == '/')
     $route = '/radio';
 
