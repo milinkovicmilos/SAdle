@@ -32,7 +32,6 @@ const fetchSongName = function() {
 
 // Get list a list of radio stations and render them in select element
 const fetchRadioStations = function() {
-    renderSelectWrapper();
     getJSON("GetRadioStations")
         .then((json) => {
             renderRadioOptions(json);
