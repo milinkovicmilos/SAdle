@@ -92,6 +92,7 @@ const setupGame = function() {
 
                 if (serverDate > localStorageDate || localStorageDate == null) {
                     resetLocalStorageGameData(date);
+                    RESETFUNCTIONS[GAME]();
                 }
 
                 countdownTimer(json.timeToNextDay);
