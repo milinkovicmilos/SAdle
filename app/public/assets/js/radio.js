@@ -77,10 +77,10 @@ const submitRadioGuess = function() {
         });
 }
 
-const renderSelectWrapper = function() {
+const renderRadioOptions = function(stationsArray) {
     const wrapper = document.querySelector("#select-wrapper");
-
     const select = document.createElement("select");
+    
     select.id = "radio-select";
     select.classList.add("form-select", "w-auto");
     const button = document.createElement("input");
@@ -88,12 +88,8 @@ const renderSelectWrapper = function() {
     button.classList.add("btn", "btn-success", "mx-2");
     button.value = "Submit";
     button.addEventListener("click", submitRadioGuess);
-
     wrapper.append(select, button);
-}
-
-const renderRadioOptions = function(stationsArray) {
-    const radioSelect = document.querySelector("#radio-select");
+    
     const guessesRadioIds = getGuessesFromLocalStorage().map((x) => Number(x.id));
     for (const station of stationsArray) {
         if (guessesRadioIds.includes(station.id)) {
@@ -103,7 +99,7 @@ const renderRadioOptions = function(stationsArray) {
         option.value = station.id;
         option.textContent = station.name;
 
-        radioSelect.append(option);
+        select.append(option);
     }
 }
 
