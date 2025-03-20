@@ -52,8 +52,7 @@ class GameController extends Controller
                     "value" => $songModel->retrieveVideoId($songId),
                 ];
             } else {
-                $obj = new \stdClass();
-                switch ($this->json->guess_number) {
+                switch ($this->json->guessNumber) {
                     case 2:
                         $clues[] = [
                             "elementId" => "author-name",
