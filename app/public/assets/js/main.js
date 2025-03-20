@@ -192,7 +192,7 @@ const initializePageRefresh = function() {
 }
 
 const setupGame = async function() {
-    const gameDate = getGameDate();
+    const gameDate = new Date(getGameDate());
     const serverDateJSON = await getServerDate();
     const serverDate = new Date(serverDateJSON.date);
     const timeToNextDay = serverDateJSON.timeToNextDay;
