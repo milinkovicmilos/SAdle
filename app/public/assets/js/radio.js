@@ -1,74 +1,134 @@
 const displaySongName = function(name) {
     const songNameElement = document.querySelector("#song-name");
-    songNameElement.textContent = `Song: ${name}`;
+    if (!songNameElement.textContent) {
+        songNameElement.textContent = `Song: ${name}`;
+    }
 }
 
 const displayAuthorName = function(name) {
     const authorNameElement = document.querySelector("#author-name");
-    authorNameElement.textContent = `Author name: ${name}`;
+    if (!authorNameElement.textContent) {
+        authorNameElement.textContent = `Author name: ${name}`;
+    }
 }
 
 const displayMusicVideo = function(videoId) {
     const iframeElement = document.querySelector("#music-video");
     const src = `https://www.youtube.com/embed/${videoId}`;
-    iframeElement.setAttribute("src", src);
+    if (!iframeElement.getAttribute("src")) {
+        iframeElement.setAttribute("src", src);
+    }
+}
+
+const radioRenderClues = function(cluesArr) {
+    for (const clueObj of cluesArr) {
+        radioRenderSingleClue(clueObj);
+    }
+}
+
+const radioRenderSingleClue = function(clueObj) {
+    switch (clueObj.elementId) {
+        case "song-name":
+            displaySongName(clueObj.value);
+            break;
+        case "author-name":
+            displayAuthorName(clueObj.value);
+            break;
+        case "music-video":
+            displayMusicVideo(clueObj.value);
+            break;
+    }
 }
 
 // Gets todays song name
-const fetchSongName = function() {
-    getJSON("GetSongName")
-        .then((json) => {
-            displaySongName(json.name);
-            let clueObj = {
-                elementId: "song-name",
-                value: json.name,
-            }
-            addClueToLocalStorage(clueObj);
-        })
-        .catch(() => {
-            displayError("There was an error while fetching song name... Please try again later.");
-        });
+const radioGetInitialClues = async function() {
+    try {
+        const clue = await getJSON("GetSongName");
+        const clueObj = {
+            elementId: clue.elementId,
+            value: clue.name,
+        }
+        addGameClue(clueObj);
+    }
+    catch (error) {
+        displayError("There was an error while fetching song name... Please try again later.");
+    }
 }
 
 // Get list a list of radio stations and render them in select element
-const fetchRadioStations = function() {
-    getJSON("GetRadioStations")
-        .then((json) => {
-            renderRadioOptions(json);
-        })
-        .catch(() => {
-            displayError("There was an error while fetching radio stations... Please try again later.");
-        });
+const fetchRadioStations = async function() {
+    try {
+        return await getJSON("GetRadioStations");
+    }
+    catch (error) {
+        displayError("There was an error while fetching radio stations... Please try again later.");
+    }
+}
+
+const renderRadioSelect = function(radioStationsArr) {
+    const guessedRadioIds = getGameGuesses().map(x => Number(x.id));
+    const wrapper = document.querySelector("#select-wrapper");
+
+    const select = document.createElement("select");
+    select.id = "radio-select";
+    select.classList.add("form-select", "w-auto");
+    for (const radioObj of radioStationsArr) {
+        if (guessedRadioIds.includes(radioObj.id)) {
+            continue;
+        }
+        const option = document.createElement("option");
+        option.value = radioObj.id;
+        option.textContent = radioObj.name;
+        select.append(option);
+    }
+
+    const button = document.createElement("button");
+    button.textContent = "Submit";
+    button.classList.add("btn", "btn-success", "mx-2");
+    button.addEventListener("click", submitRadioGuess);
+
+    wrapper.append(select);
+    wrapper.append(button);
+}
+
+const removeRadioSelectOption = function(optionValue) {
+    const radioSelect = document.querySelector("#radio-select");
+    for (const option of radioSelect.children) {
+        if (option.value == optionValue) {
+            option.remove();
+        }
+    }
 }
 
 const submitRadioGuess = function() {
-    const select = document.querySelector("#radio-select");
-    const radioId = select.value;
-    const selectedOption = select.selectedOptions[0];
+    const radioSelect = document.querySelector("#radio-select");
+    const radioId = radioSelect.value;
+    const selectedRadioName = radioSelect.selectedOptions[0].textContent
+    removeRadioSelectOption(radioId);
+
     const data = {
-        "id": radioId,
-        "guess_number": getGuessesFromLocalStorage().length + 1,
-    }
+        id: radioId,
+        guessNumber: 10 - radioSelect.children.length,
+    };
+
     postJSON("RadioGuess", data)
         .then((json) => {
-            addGuessToLocalStorage({
-                "id": radioId,
-                "name": selectedOption.textContent,
-                "correct": json.correct,
+            addGameGuess({
+                id: radioId,
+                name: selectedRadioName,
+                correct: json.correct,
             });
+            renderGuess(selectedRadioName, json.correct);
             if (json.correct) {
-                const select = document.querySelector("#select-wrapper");
-                select.innerHTML = "";
+                const selectWrapper = document.querySelector("#select-wrapper");
+                selectWrapper.innerHTML = "";
                 setGameStatus(true);
-            } else {
-                removeRadioOption(radioId);
             }
-            renderGuess(selectedOption.textContent, json.correct);
+
+            // Additional clues we get from the game
             for (const clueObj of json.clues) {
-                if (!checkIfClueExistsInLocalStorage(clueObj)) {
-                    addClueToLocalStorage(clueObj);
-                    renderClue(clueObj);
-                }
+                addGameClue(clueObj);
+                radioRenderSingleClue(clueObj);
             }
         })
         .catch(() => {
@@ -76,38 +136,9 @@ const submitRadioGuess = function() {
         });
 }
 
-const renderRadioOptions = function(stationsArray) {
-    const wrapper = document.querySelector("#select-wrapper");
-    const select = document.createElement("select");
-    
-    select.id = "radio-select";
-    select.classList.add("form-select", "w-auto");
-    const button = document.createElement("input");
-    button.setAttribute("type", "button");
-    button.classList.add("btn", "btn-success", "mx-2");
-    button.value = "Submit";
-    button.addEventListener("click", submitRadioGuess);
-    wrapper.append(select, button);
-    
-    const guessesRadioIds = getGuessesFromLocalStorage().map((x) => Number(x.id));
-    for (const station of stationsArray) {
-        if (guessesRadioIds.includes(station.id)) {
-            continue;
-        }
-        const option = document.createElement("option");
-        option.value = station.id;
-        option.textContent = station.name;
-
-        select.append(option);
-    }
-}
-
-const removeRadioOption = function(optionValue) {
-    const radioSelect = document.querySelector("#radio-select");
-    for (const option of radioSelect.children) {
-        if (option.value == optionValue) {
-            option.remove();
-        }
+const radioRenderGuesses = function(guessesArr) {
+    for (const guessObj of guessesArr) {
+        renderGuess(guessObj.name, guessObj.correct);
     }
 }
 
@@ -122,50 +153,11 @@ const renderGuess = function(text, isCorrect) {
     previousGuess ? document.body.insertBefore(guess, previousGuess) : document.body.insertBefore(guess, footer);
 }
 
-const renderClue = function(clueObj) {
-    const element = document.querySelector(`#${clueObj.elementId}`);
-    switch (element.tagName) {
-        case "P":
-            if (element.textContent) {
-                return;
-            }
-            if (element.id == "song-name") {
-                displaySongName(clueObj.value);
-            } else {
-                displayAuthorName(clueObj.value);
-            }
-            break;
-
-        case "IFRAME":
-            if (element.hasAttribute("src")) {
-                return;
-            }
-            displayMusicVideo(clueObj.value);
-            break;
-    }
-}
-
 // Game start function - called from main.js
-const radioStart = function() {
-    // Displays all the current available clues to the player
-    const clues = getCluesFromLocalStorage();
-    for (const clueObj of clues) {
-        renderClue(clueObj);
-    }
-
-    // Display all the guesses that player made
-    const guesses = getGuessesFromLocalStorage();
-    for (const guessObj of guesses) {
-        renderGuess(guessObj.name, guessObj.correct);
-    }
-
-    // Checks if player has beaten the mini game for today
-    if (!getGameStatus()) {
-        fetchRadioStations();
-        if (getCluesFromLocalStorage().length == 0) {
-            fetchSongName();
-        }
-    }
+// Prepares the interface for playing the game
+const radioStart = async function() {
+    const radioStationsArr = await fetchRadioStations();
+    renderRadioSelect(radioStationsArr);
 }
 
 // Game reset function - called from main.js

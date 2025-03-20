@@ -20,6 +20,19 @@ const RESETFUNCTIONS = {
     "radio": radioReset,
 };
 
+// These fucntions are for rendering the clues that player got so far
+const RENDERCLUESFUNCTIONS = {
+    "radio": radioRenderClues,
+};
+
+const GETINITIALCLUESFUNCTIONS = {
+    "radio": radioGetInitialClues,
+};
+
+const RENDERGUESSESFUNCTIONS = {
+    "radio": radioRenderGuesses,
+};
+
 const getJSON = async function(url) {
     try {
         const request = await fetch(url, {
@@ -57,109 +70,6 @@ const postJSON = async function(url, data) {
     }
 }
 
-const getLocalStorage = function(key) {
-    return localStorage.getItem(key);
-}
-
-const setLocalStorage = function(key, value) {
-    localStorage.setItem(key, value);
-}
-
-// Sets the game status in local storage
-const setGameStatus = function(value) {
-    setLocalStorage(`${getGameName()}Beaten`, value);
-}
-
-const getGameStatus = function() {
-    return getLocalStorage(`${getGameName()}Beaten`) == "true";
-}
-
-const setAutoRefreshLocalStorage = function(value) {
-    setLocalStorage("autoRefresh", value);
-}
-
-const getAutoRefreshLocalStorage = function() {
-    return getLocalStorage("autoRefresh") == "true";
-}
-
-const setupGame = function() {
-    if (!getAutoRefreshLocalStorage()) {
-        getJSON("GetCurrentDate")
-            .then((json) => {
-                const date = json.date;
-                const serverDate = new Date(date);
-                const localStorageDate = getLocalStorageGameDate();
-
-                if (serverDate > localStorageDate || localStorageDate == null) {
-                    resetLocalStorageGameData(date);
-                    RESETFUNCTIONS[GAME]();
-                }
-
-                countdownTimer(json.timeToNextDay);
-            })
-            .catch(() => {
-                displayError("Error while fetching game data... Please try again later.");
-                return;
-            });
-    }
-    setAutoRefreshLocalStorage(false);
-    STARTFUNCTIONS[GAME]();
-}
-
-const getLocalStorageGameDate = function() {
-    return new Date(getLocalStorage("gameDate"));
-}
-
-const setLocalStorageGameDate = function(date) {
-    setLocalStorage("gameDate", date);
-}
-
-const getCluesFromLocalStorage = function() {
-    const clues = getLocalStorage(`${GAME}Clues`);
-    if (clues == null) {
-        return [];
-    }
-    return JSON.parse(clues);
-}
-
-const checkIfClueExistsInLocalStorage = function(clueObj) {
-    const clues = getCluesFromLocalStorage();
-    for (const clue of clues) {
-        if (clue.elementId == clueObj.elementId && clue.value == clueObj.value) {
-            return true;
-        }
-    }
-    return false;
-}
-
-const addClueToLocalStorage = function(clueObj) {
-    let clues = getCluesFromLocalStorage();
-    clues.push(clueObj);
-    setLocalStorage(`${GAME}Clues`, JSON.stringify(clues));
-}
-
-const resetCluesInLocalStorage = function() {
-    setLocalStorage(`${GAME}Clues`, "[]");
-}
-
-const getGuessesFromLocalStorage = function() {
-    const guesses = getLocalStorage(`${GAME}Guesses`);
-    if (guesses == null) {
-        return [];
-    }
-    return JSON.parse(guesses);
-}
-
-const addGuessToLocalStorage = function(guessObj) {
-    const guesses = getGuessesFromLocalStorage();
-    guesses.push(guessObj);
-    setLocalStorage(`${GAME}Guesses`, JSON.stringify(guesses));
-}
-
-const resetGuessesInLocalStorage = function() {
-    setLocalStorage(`${GAME}Guesses`, "[]");
-}
-
 const displayError = function(errorText) {
     let errorElement = document.querySelector("#error");
     if (errorElement) {
@@ -176,13 +86,6 @@ const displayError = function(errorText) {
     }
 }
 
-const resetLocalStorageGameData = function(gameDate) {
-    setGameStatus(false);
-    setLocalStorageGameDate(gameDate);
-    resetCluesInLocalStorage();
-    resetGuessesInLocalStorage();
-}
-
 const markActiveLink = function() {
     const linksUl = document.querySelector("header div ul");
     for (const li of linksUl.children) {
@@ -193,14 +96,19 @@ const markActiveLink = function() {
     }
 }
 
-const countdownTimer = function(time) {
+const initializeTimer = async function(initialTime) {
+    await countdownTimer(initialTime);
+    initializePageRefresh();
+}
+
+const countdownTimer = async function(time) {
     if (time <= 0) {
-        InitializePageRefresh();
         return;
     }
-
     renderTimer(time);
-    setTimeout(() => { countdownTimer(--time); }, 1000);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await countdownTimer(--time);
 }
 
 const renderTimer = async function(time) {
@@ -217,31 +125,101 @@ const renderTimer = async function(time) {
     timerElement.textContent = text;
 }
 
-const InitializePageRefresh = function() {
-    const interval = setInterval(() => {
-        getJSON("GetCurrentDate")
-            .then((json) => {
-                const date = new Date(json.date);
-                const localDate = getLocalStorageGameDate();
-                if (date > localDate) {
-                    clearInterval(interval);
-                    resetLocalStorageGameData(json.date);
-                    RESETFUNCTIONS[GAME]();
-                    setAutoRefreshLocalStorage(true);
-                    setupGame();
-                }
-
-                countdownTimer(json.timeToNextDay);
-            })
-            .catch(() => {
-                displayError("Error while fetching game data... Please try again later.");
-                return;
-            });
-    }, 1000);
+const getServerDate = async function() {
+    try {
+        return getJSON("GetCurrentDate");
+    }
+    catch (error) {
+        displayError("There was an error while getting the server date... Please try again later.");
+    }
 }
 
-// Initialize Basic setup and call the start game function
-setupGame();
+const getGameDate = function() {
+    return localStorage.getItem("gameDate");
+}
 
-// Mark the active link in header
-markActiveLink();
+const setGameDate = function(dateStr) {
+    localStorage.setItem("gameDate", dateStr);
+}
+
+const setGameStatus = function(value) {
+    localStorage.setItem(`${GAME}Beaten`, JSON.stringify(value));
+}
+
+const getGameStatus = function() {
+    return localStorage.getItem(`${GAME}Beaten`) === "true";
+}
+
+const getGameClues = function() {
+    const value = localStorage.getItem(`${GAME}Clues`);
+    return value == null ? [] : JSON.parse(value);
+}
+
+const setGameClues = function(cluesArr) {
+    localStorage.setItem(`${GAME}Clues`, JSON.stringify(cluesArr));
+}
+
+const addGameClue = function(clueObj) {
+    let cluesArr = getGameClues();
+    cluesArr.push(clueObj);
+    setGameClues(cluesArr);
+}
+
+const getGameGuesses = function() {
+    const value = localStorage.getItem(`${GAME}Guesses`);
+    return value == null ? [] : JSON.parse(value);
+}
+
+const setGameGuesses = function(guessesArr) {
+    localStorage.setItem(`${GAME}Guesses`, JSON.stringify(guessesArr));
+}
+
+const addGameGuess = function(guessObj) {
+    let guessesArr = getGameGuesses();
+    guessesArr.push(guessObj);
+    setGameGuesses(guessesArr);
+}
+
+const resetGameData = function() {
+    localStorage.removeItem(`${GAME}Clues`);
+    localStorage.removeItem(`${GAME}Guesses`);
+    localStorage.removeItem(`${GAME}Beaten`);
+}
+
+const initializePageRefresh = function() {
+    RESETFUNCTIONS[GAME]();
+    setupGame();
+}
+
+const setupGame = async function() {
+    const gameDate = getGameDate();
+    const serverDateJSON = await getServerDate();
+    const serverDate = new Date(serverDateJSON.date);
+    const timeToNextDay = serverDateJSON.timeToNextDay;
+
+    // If it's the new game day then just reset the previous data about the game
+    if (serverDate > gameDate) {
+        resetGameData();
+    }
+    setGameDate(serverDateJSON.date);
+    initializeTimer(timeToNextDay);
+
+    // If the player just started the game
+    if (getGameClues().length == 0) {
+        await GETINITIALCLUESFUNCTIONS[GAME]();
+    }
+
+    RENDERCLUESFUNCTIONS[GAME](getGameClues());
+    RENDERGUESSESFUNCTIONS[GAME](getGameGuesses());
+    if (!getGameStatus()) {
+        STARTFUNCTIONS[GAME]();
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Initialize Basic setup and call the start game function
+    setupGame();
+
+    // Mark the active link in header
+    markActiveLink();
+});
