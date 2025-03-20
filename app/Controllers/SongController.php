@@ -22,6 +22,7 @@ class SongController extends Controller
             $songId = $this->gameModel->retrieveActiveSongId();
             $data = $this->model->retrieveRadioSongName($songId);
             $data = [
+                "elementId" => "song-name",
                 "name" => $data
             ];
         } catch (\PDOException | \Exception | \Error $e) {
