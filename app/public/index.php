@@ -25,6 +25,7 @@ Content-Security-Policy:
     font-src 'self' https://cdn.jsdelivr.net; 
     connect-src 'self';
 CSP;
+$csp = str_replace("\n", "", $csp);
 header($csp);
 
 if ($route == '/')
