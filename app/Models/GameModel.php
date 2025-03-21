@@ -27,17 +27,4 @@ class GameModel extends Model
 
         return $result;
     }
-
-    public function retrieveCorrectRadioId(): int
-    {
-        $result = $this->dbc->fetchPrepared(
-            "SELECT radio_id FROM games WHERE game_date = ?",
-            [$this->retrieveCurrentDate()]
-        )[0]->radio_id;
-
-        if (is_null($result))
-            throw new \Exception("Correct radio for todays game is null.");
-
-        return $result;
-    }
 }

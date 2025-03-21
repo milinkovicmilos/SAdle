@@ -36,11 +36,12 @@ class GameController extends Controller
     public function radioGuess()
     {
         try {
-            $correctRadioId = $this->model->retrieveCorrectRadioId();
-            $correct = $correctRadioId == $this->json->id;
             $clues = [];
             $songModel = new SongModel();
+
             $songId = $this->model->retrieveActiveSongId();
+            $correctRadioId = $songModel->retrieveSongsRadio($songId);
+            $correct = $correctRadioId == $this->json->id;
 
             if ($correct) {
                 $clues[] = [

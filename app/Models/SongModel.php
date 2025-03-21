@@ -18,4 +18,9 @@ class SongModel extends Model
     {
         return $this->dbc->fetchPrepared("SELECT video_id FROM songs WHERE id = ?", [$songId])[0]->video_id;
     }
+
+    public function retrieveSongsRadio(int $songId): int
+    {
+        return $this->dbc->fetchPrepared("SELECT radio_id FROM songs WHERE id = ?", [$songId])[0]->radio_id;
+    }
 }

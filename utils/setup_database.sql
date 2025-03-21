@@ -2,11 +2,10 @@ START TRANSACTION;
 
 CREATE TABLE `games` (
   `id` int(10) NOT NULL,
-  `radio_id` int(2) NOT NULL,
   `song_id` int(3) NOT NULL,
-  `title` varchar(32) NOT NULL,
-  `origin_id` int(1) NOT NULL,
-  `giver_id` int(2) NOT NULL,
+  `title_mission_id` int(3) NOT NULL,
+  `origin_mission_id` int(3) NOT NULL,
+  `giver_mission_id` int(3) NOT NULL,
   `game_date` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -46,11 +45,10 @@ CREATE TABLE `songs` (
 
 ALTER TABLE `games`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `FK_RADIO_ID` (`radio_id`),
   ADD KEY `FK_SONG_ID` (`song_id`),
-  ADD KEY `FK_TITLE` (`title`),
-  ADD KEY `FK_ORIGIN_ID` (`origin_id`),
-  ADD KEY `FK_GIVER_ID` (`giver_id`);
+  ADD KEY `FK_TITLE_MISSION_ID` (`title_mission_id`),
+  ADD KEY `FK_ORIGIN_MISSION_ID` (`origin_mission_id`),
+  ADD KEY `FK_GIVER_MISSION_ID` (`giver_mission_id`);
 
 ALTER TABLE `missions`
   ADD PRIMARY KEY (`id`),
@@ -96,8 +94,10 @@ ALTER TABLE `songs`
 
 
 ALTER TABLE `games`
-  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`radio_id`) REFERENCES `radio_stations` (`id`),
-  ADD CONSTRAINT `games_ibfk_2` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`);
+  ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`),
+  ADD CONSTRAINT `games_ibfk_2` FOREIGN KEY (`title_mission_id`) REFERENCES `missions` (`id`),
+  ADD CONSTRAINT `games_ibfk_3` FOREIGN KEY (`origin_mission_id`) REFERENCES `missions` (`id`),
+  ADD CONSTRAINT `games_ibfk_4` FOREIGN KEY (`giver_mission_id`) REFERENCES `missions` (`id`);
 
 ALTER TABLE `missions`
   ADD CONSTRAINT `missions_ibfk_1` FOREIGN KEY (`origin_id`) REFERENCES `mission_origins` (`id`),
