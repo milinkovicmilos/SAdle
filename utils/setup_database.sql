@@ -27,7 +27,7 @@ CREATE TABLE `mission_givers` (
 
 CREATE TABLE `mission_origins` (
   `id` int(1) NOT NULL,
-  `name` varchar(50) NOT NULL
+  `name` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `radio_stations` (
@@ -99,7 +99,7 @@ ALTER TABLE `games`
   ADD CONSTRAINT `games_ibfk_1` FOREIGN KEY (`radio_id`) REFERENCES `radio_stations` (`id`),
   ADD CONSTRAINT `games_ibfk_2` FOREIGN KEY (`song_id`) REFERENCES `songs` (`id`);
 
-ALTER TABLE `missions`a
+ALTER TABLE `missions`
   ADD CONSTRAINT `missions_ibfk_1` FOREIGN KEY (`origin_id`) REFERENCES `mission_origins` (`id`),
   ADD CONSTRAINT `missions_ibfk_2` FOREIGN KEY (`giver_id`) REFERENCES `mission_givers` (`id`);
 
