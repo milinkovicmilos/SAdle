@@ -10,28 +10,18 @@ const getGameName = function() {
 const GAME = getGameName();
 
 // These are game functions for fetching the game specific data and starting it
-const STARTFUNCTIONS = {
-    "radio": radioStart,
-};
+const STARTFUNCTION = window[`${GAME}Start`];
 
 // These are game functions that reset the
 // page stateto the one originally sent by the server
-const RESETFUNCTIONS = {
-    "radio": radioReset,
-};
+const RESETFUNCTION = window[`${GAME}Reset`];
 
 // These fucntions are for rendering the clues that player got so far
-const RENDERCLUESFUNCTIONS = {
-    "radio": radioRenderClues,
-};
+const RENDERCLUESFUNCTION = window[`${GAME}RenderClues`];
 
-const GETINITIALCLUESFUNCTIONS = {
-    "radio": radioGetInitialClues,
-};
+const GETINITIALCLUESFUNCTION = window[`${GAME}GetInitialClues`];
 
-const RENDERGUESSESFUNCTIONS = {
-    "radio": radioRenderGuesses,
-};
+const RENDERGUESSESFUNCTION = window[`${GAME}RenderGuesses`];
 
 const getJSON = async function(url) {
     try {
@@ -187,7 +177,7 @@ const resetGameData = function() {
 }
 
 const initializePageRefresh = function() {
-    RESETFUNCTIONS[GAME]();
+    RESETFUNCTION();
     setupGame();
 }
 
@@ -206,13 +196,13 @@ const setupGame = async function() {
 
     // If the player just started the game
     if (getGameClues().length == 0) {
-        await GETINITIALCLUESFUNCTIONS[GAME]();
+        await GETINITIALCLUESFUNCTION();
     }
 
-    RENDERCLUESFUNCTIONS[GAME](getGameClues());
-    RENDERGUESSESFUNCTIONS[GAME](getGameGuesses());
+    RENDERCLUESFUNCTION(getGameClues());
+    RENDERGUESSESFUNCTION(getGameGuesses());
     if (!getGameStatus()) {
-        STARTFUNCTIONS[GAME]();
+        STARTFUNCTION();
     }
 }
 

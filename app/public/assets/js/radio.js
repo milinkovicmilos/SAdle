@@ -20,7 +20,7 @@ const displayMusicVideo = function(videoId) {
     }
 }
 
-const radioRenderClues = function(cluesArr) {
+function radioRenderClues(cluesArr) {
     for (const clueObj of cluesArr) {
         radioRenderSingleClue(clueObj);
     }
@@ -41,7 +41,7 @@ const radioRenderSingleClue = function(clueObj) {
 }
 
 // Gets todays song name
-const radioGetInitialClues = async function() {
+async function radioGetInitialClues() {
     try {
         const clue = await getJSON("GetSongName");
         const clueObj = {
@@ -136,7 +136,7 @@ const submitRadioGuess = function() {
         });
 }
 
-const radioRenderGuesses = function(guessesArr) {
+function radioRenderGuesses(guessesArr) {
     for (const guessObj of guessesArr) {
         renderGuess(guessObj.name, guessObj.correct);
     }
@@ -155,14 +155,14 @@ const renderGuess = function(text, isCorrect) {
 
 // Game start function - called from main.js
 // Prepares the interface for playing the game
-const radioStart = async function() {
+async function radioStart() {
     const radioStationsArr = await fetchRadioStations();
     renderRadioSelect(radioStationsArr);
 }
 
 // Game reset function - called from main.js
 // Resets the page to the state recieved from the server
-const radioReset = function() {
+function radioReset() {
     const songName = document.querySelector("#song-name");
     songName.textContent = "";
 
