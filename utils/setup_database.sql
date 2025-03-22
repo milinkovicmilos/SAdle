@@ -19,6 +19,13 @@ CREATE TABLE `missions` (
   `reward` varchar(1024) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
+CREATE TABLE `mission_game_clues` (
+  `id` int(10) NOT NULL,
+  `game_id` int(10) NOT NULL,
+  `mission_number` int(1) NOT NULL,
+  `clue_order` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 CREATE TABLE `mission_givers` (
   `id` int(2) NOT NULL,
   `name` varchar(15) NOT NULL
@@ -56,6 +63,10 @@ ALTER TABLE `missions`
   ADD KEY `FK_ORIGIN_ID` (`origin_id`),
   ADD KEY `FK_GIVER_ID` (`giver_id`);
 
+ALTER TABLE `mission_game_clues`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_GAME_ID` (`game_id`);
+
 ALTER TABLE `mission_givers`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `IX_NAME_UNIQUE` (`name`);
@@ -80,6 +91,9 @@ ALTER TABLE `games`
 ALTER TABLE `missions`
   MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `mission_game_clues`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `mission_givers`
   MODIFY `id` int(2) NOT NULL AUTO_INCREMENT;
 
@@ -102,6 +116,9 @@ ALTER TABLE `games`
 ALTER TABLE `missions`
   ADD CONSTRAINT `missions_ibfk_1` FOREIGN KEY (`origin_id`) REFERENCES `mission_origins` (`id`),
   ADD CONSTRAINT `missions_ibfk_2` FOREIGN KEY (`giver_id`) REFERENCES `mission_givers` (`id`);
+
+ALTER TABLE `mission_game_clues`
+  ADD CONSTRAINT `mission_game_clues_ibfk_1` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`);
 
 ALTER TABLE `songs`
   ADD CONSTRAINT `songs_ibfk_1` FOREIGN KEY (`radio_id`) REFERENCES `radio_stations` (`id`);
