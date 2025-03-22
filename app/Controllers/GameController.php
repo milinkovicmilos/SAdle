@@ -16,7 +16,7 @@ class GameController extends Controller
         $this->model = new GameModel();
     }
 
-    public function getCurrentDate()
+    public function getCurrentDate(): void
     {
         try {
             $currentDate = $this->model->retrieveCurrentDate();
@@ -54,7 +54,7 @@ class GameController extends Controller
         echo json_encode($data);
     }
 
-    public function radioGuess()
+    public function radioGuess(): void
     {
         try {
             // Validation
