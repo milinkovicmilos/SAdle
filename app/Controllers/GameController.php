@@ -34,6 +34,26 @@ class GameController extends Controller
         echo json_encode($data);
     }
 
+    public function getSongName(): void
+    {
+        try {
+            $songModel = new SongModel();
+            $songId = $this->model->retrieveActiveSongId();
+            $data = $songModel->retrieveRadioSongName($songId);
+            $data = [
+                "elementId" => "song-name",
+                "name" => $data
+            ];
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error while retrieving data."
+            ];
+            http_response_code(500);
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
+
     public function radioGuess()
     {
         try {
