@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\GameModel;
 use App\Models\SongModel;
+use Exception;
 
 class GameController extends Controller
 {
@@ -36,12 +37,24 @@ class GameController extends Controller
     public function radioGuess()
     {
         try {
+            // Validation
+            if (!property_exists($this->json, "id") || empty($this->json->id) || !is_numeric($this->json->id)) {
+                throw new Exception("Submitted Radio ID is invalid.");
+            }
+
+            if (!property_exists($this->json, "guessNumber") || empty($this->json->guessNumber) || !is_numeric($this->json->guessNumber)) {
+                throw new Exception("Submitted guessNumber is invalid");
+            }
+
+            $submittedRadioId = $this->json->id;
+            $guessNumber = $this->json->guessNumber;
+
             $clues = [];
             $songModel = new SongModel();
 
             $songId = $this->model->retrieveActiveSongId();
             $correctRadioId = $songModel->retrieveSongsRadio($songId);
-            $correct = $correctRadioId == $this->json->id;
+            $correct = $correctRadioId == $submittedRadioId;
 
             if ($correct) {
                 $clues[] = [
@@ -53,7 +66,7 @@ class GameController extends Controller
                     "value" => $songModel->retrieveVideoId($songId),
                 ];
             } else {
-                switch ($this->json->guessNumber) {
+                switch ($guessNumber) {
                     case 2:
                         $clues[] = [
                             "elementId" => "author-name",

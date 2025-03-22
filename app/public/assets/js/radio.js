@@ -107,7 +107,7 @@ const submitRadioGuess = function() {
     removeRadioSelectOption(radioId);
 
     const data = {
-        id: radioId,
+        id: Number(radioId),
         guessNumber: 10 - radioSelect.children.length,
     };
 
