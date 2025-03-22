@@ -14,6 +14,14 @@ class GameModel extends Model
         return strtotime("tomorrow") - time();
     }
 
+    public function retrieveCurrentGameId(): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT id FROM games WHERE game_date = ?",
+            [$this->retrieveCurrentDate()]
+        )[0]->id;
+    }
+
     public function retrieveActiveSongId(): int
     {
         // Get todays song id
@@ -26,5 +34,18 @@ class GameModel extends Model
             throw new \Exception("Radio game song id for today is null.");
 
         return $result;
+    }
+
+    public function retrieveCurrentMissionId($missionNumber): mixed
+    {
+        $map = [
+            1 => "title_mission_id",
+            2 => "origin_mission_id",
+            3 => "giver_mission_id",
+        ];
+        return $this->dbc->fetchPrepared(
+            "SELECT $map[$missionNumber] as id FROM games WHERE game_date = ?",
+            [$this->retrieveCurrentDate()]
+        )[0]->id;
     }
 }

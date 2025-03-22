@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\GameModel;
+use App\Models\MissionGameCluesModel;
+use App\Models\MissionModel;
 use App\Models\SongModel;
 use Exception;
 
@@ -106,6 +108,44 @@ class GameController extends Controller
                 "correct" => $correct,
                 "clues" => $clues,
             ];
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error in processing radio guess."
+            ];
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
+
+    public function getMissionClues(int $clueNumber, int $missionNumber): array
+    {
+        $missionsModel = new MissionModel();
+        $missionGameCluesModel = new MissionGameCluesModel();
+
+        $currentGameId = $this->model->retrieveCurrentGameId();
+
+        $cluesOrder = $missionGameCluesModel->retrieveMissionClueOrder($currentGameId, $missionNumber);
+        $cluesOrder = str_replace(',', '","', $cluesOrder);
+
+        $clueName = json_decode('["' . $cluesOrder . '"]')[$clueNumber - 1];
+
+        $missionId = $this->model->retrieveCurrentMissionId($missionNumber);
+        $value = $missionsModel->retrieveMissionInfo($clueName, $missionId);
+
+        return [
+            "missionNumber" => $missionNumber,
+            "elementClass" => $clueName,
+            "value" => $value,
+        ];
+    }
+
+    public function getFirstMissionClues(): void
+    {
+        try {
+            $data = [];
+            $data[] = $this->getMissionClues(1, 1);
+            $data[] = $this->getMissionClues(1, 2);
+            $data[] = $this->getMissionClues(1, 3);
         } catch (\PDOException | \Exception | \Error $e) {
             $data = [
                 "message" => "Error in processing radio guess."
