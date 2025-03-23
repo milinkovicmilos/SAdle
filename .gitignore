@@ -14,3 +14,16 @@
 
 # Sitemap
 /app/public/sitemap.xml
+
+# Docker container files
+/.config/mariadb-root/*
+!/.config/mariadb-root/.gitkeep
+
+/.config/webserver-root/*
+!/.config/webserver-root/.gitkeep
+
+/.config/vhosts/*
+!/.config/vhosts/.gitkeep
+
+/.data/mysql/*
+!/.data/mysql/.gitkeep

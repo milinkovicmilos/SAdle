@@ -1,0 +1,28 @@
+services:
+  webserver:
+    container_name: "webserver"
+    build: .images/php
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - .config/webserver-root:/root
+      - ./:/var/www/html:rw
+      - .config/vhosts:/etc/apache2/sites-enabled
+  mariadb:
+    container_name: "mariadb"
+    image: "mariadb:latest"
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - .config/mariadb-root:/root
+      - .data/mysql:/var/lib/mysql
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    ports:
+      - "127.0.0.1:8081:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - PMA_HOST=mariadb
