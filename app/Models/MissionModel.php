@@ -24,4 +24,9 @@ class MissionModel extends Model
         }
         return $value;
     }
+
+    public function retrieveMissionTitles(): array
+    {
+        return $this->dbc->fetchPrepared("SELECT id, title FROM missions", []);
+    }
 }
