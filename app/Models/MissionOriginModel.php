@@ -11,4 +11,9 @@ class MissionOriginModel extends Model
             [$originId]
         )[0]->name;
     }
+
+    public function retrieveMissionOrigins(): array
+    {
+        return $this->dbc->fetchPrepared("SELECT id, name FROM mission_origins", []);
+    }
 }
