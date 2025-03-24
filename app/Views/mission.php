@@ -1,5 +1,5 @@
 <div class="container-md">
-    <div id="mission-title" class="mission card my-3">
+    <div id="mission-1" class="mission card my-3">
         <div class="card-body">
             <table class="table">
                 <tbody>
@@ -23,7 +23,7 @@
             </table>
         </div>
     </div>
-    <div id="mission-origin" class="mission card my-3">
+    <div id="mission-2" class="mission card my-3">
         <div class="card-body">
             <table class="table">
                 <tbody>
@@ -47,7 +47,7 @@
             </table>
         </div>
     </div>
-    <div id="mission-giver" class="mission card my-3">
+    <div id="mission-3" class="mission card my-3">
         <div class="card-body">
             <table class="table">
                 <tbody>
@@ -76,4 +76,5 @@
     <p class="text-center mt-3 mb-0">Time to next game:</p>
     <p id="timer" class="text-center"></p>
 </div>
+<script src="assets/js/mission.js"></script>
 <script src="assets/js/main.js"></script>
