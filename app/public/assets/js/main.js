@@ -7,6 +7,8 @@ const getGameName = function() {
     return path.split('/')[1];
 }
 
+const GAMELIST = ["mission", "radio"];
+
 const GAME = getGameName();
 
 // These are game functions for fetching the game specific data and starting it
@@ -171,9 +173,13 @@ const addGameGuess = function(guessObj) {
 }
 
 const resetGameData = function() {
-    localStorage.removeItem(`${GAME}Clues`);
-    localStorage.removeItem(`${GAME}Guesses`);
-    localStorage.removeItem(`${GAME}Beaten`);
+    for (const key in localStorage) {
+        for (const game of GAMELIST) {
+            if (key.startsWith(game)) {
+                localStorage.removeItem(key);
+            }
+        }
+    }
 }
 
 const initializePageRefresh = function() {
