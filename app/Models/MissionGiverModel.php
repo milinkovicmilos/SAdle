@@ -11,4 +11,9 @@ class MissionGiverModel extends Model
             [$giverId]
         )[0]->name;
     }
+
+    public function retrieveMissionGivers(): array
+    {
+        return $this->dbc->fetchPrepared("SELECT id, name FROM mission_givers", []);
+    }
 }

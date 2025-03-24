@@ -18,6 +18,7 @@ class Router
         $this->addRoute(RequestMethod::GET, "/GetSongName", \App\Controllers\GameController::class, "getSongName");
         $this->addRoute(RequestMethod::GET, "/GetFirstMissionClues", \App\Controllers\GameController::class, "getFirstMissionClues");
         $this->addRoute(RequestMethod::GET, "/GetMissionTitles", \App\Controllers\MissionController::class, "getMissionTitles");
+        $this->addRoute(RequestMethod::GET, "/GetMissionGivers", \App\Controllers\MissionGiverController::class, "getMissionGivers");
     }
 
     public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void
