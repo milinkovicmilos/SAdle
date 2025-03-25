@@ -21,3 +21,25 @@
 .mission tbody tr td:nth-child(6) {
     width: 8%;
 }
+
+.search-input {
+}
+
+.search-options {
+    position: absolute;
+    z-index: 1;
+    top: 3rem;
+    left: 0.5rem;
+    height: 500px;
+    width: 200px;
+    border: 1px solid #e2e2e2;
+    overflow-y: scroll;
+}
+
+.search-option {
+    padding: 0.25rem;
+}
+
+.selected-option {
+    background-color: gray;
+}
