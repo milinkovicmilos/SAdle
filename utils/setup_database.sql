@@ -22,7 +22,7 @@ CREATE TABLE `missions` (
 CREATE TABLE `mission_game_clues` (
   `id` int(10) NOT NULL,
   `game_id` int(10) NOT NULL,
-  `mission_number` int(1) NOT NULL,
+  `attribute_to_guess` varchar(8) NOT NULL,
   `clue_order` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 

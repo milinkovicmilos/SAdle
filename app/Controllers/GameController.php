@@ -117,23 +117,23 @@ class GameController extends Controller
         echo json_encode($data);
     }
 
-    public function getMissionClues(int $clueNumber, int $missionNumber): array
+    public function getMissionClues(int $clueNumber, string $attributeToGuess): array
     {
         $missionsModel = new MissionModel();
         $missionGameCluesModel = new MissionGameCluesModel();
 
         $currentGameId = $this->model->retrieveCurrentGameId();
 
-        $cluesOrder = $missionGameCluesModel->retrieveMissionClueOrder($currentGameId, $missionNumber);
+        $cluesOrder = $missionGameCluesModel->retrieveMissionClueOrder($currentGameId, $attributeToGuess);
         $cluesOrder = str_replace(',', '","', $cluesOrder);
 
         $clueName = json_decode('["' . $cluesOrder . '"]')[$clueNumber - 1];
 
-        $missionId = $this->model->retrieveCurrentMissionId($missionNumber);
+        $missionId = $this->model->retrieveCurrentMissionId($attributeToGuess);
         $value = $missionsModel->retrieveMissionInfo($clueName, $missionId);
 
         return [
-            "missionNumber" => $missionNumber,
+            "attributeToGuess" => $attributeToGuess,
             "elementClass" => $clueName,
             "value" => $value,
         ];
@@ -143,9 +143,9 @@ class GameController extends Controller
     {
         try {
             $data = [];
-            $data[] = $this->getMissionClues(1, 1);
-            $data[] = $this->getMissionClues(1, 2);
-            $data[] = $this->getMissionClues(1, 3);
+            $data[] = $this->getMissionClues(1, "title");
+            $data[] = $this->getMissionClues(1, "origin");
+            $data[] = $this->getMissionClues(1, "giver");
         } catch (\PDOException | \Exception | \Error $e) {
             $data = [
                 "message" => "Error in processing radio guess."

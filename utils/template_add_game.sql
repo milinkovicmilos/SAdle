@@ -8,7 +8,7 @@ SELECT
     (SELECT id FROM missions ORDER BY RAND() LIMIT 1),
     DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY);
 
-INSERT INTO mission_game_clues (game_id, mission_number, clue_order)
+INSERT INTO mission_game_clues (game_id, attribute_to_guess, clue_order)
 SELECT
     (
         SELECT id
@@ -16,11 +16,11 @@ SELECT
         ORDER BY id DESC
         LIMIT 1
     ),
-    1,
+    'title',
     GROUP_CONCAT(words ORDER BY RAND() SEPARATOR ',')
     FROM (SELECT 'origin' as words UNION SELECT 'giver' UNION SELECT 'description' UNION SELECT 'objective' UNION SELECT 'reward') as words_table;
 
-INSERT INTO mission_game_clues (game_id, mission_number, clue_order)
+INSERT INTO mission_game_clues (game_id, attribute_to_guess, clue_order)
 SELECT
     (
         SELECT id
@@ -28,11 +28,11 @@ SELECT
         ORDER BY id DESC
         LIMIT 1
     ),
-    2,
+    'origin',
     GROUP_CONCAT(words ORDER BY RAND() SEPARATOR ',')
     FROM (SELECT 'title' as words UNION SELECT 'giver' UNION SELECT 'description' UNION SELECT 'objective' UNION SELECT 'reward') as words_table;
 
-INSERT INTO mission_game_clues (game_id, mission_number, clue_order)
+INSERT INTO mission_game_clues (game_id, attribute_to_guess, clue_order)
 SELECT
     (
         SELECT id
@@ -40,6 +40,6 @@ SELECT
         ORDER BY id DESC
         LIMIT 1
     ),
-    3,
+    'giver',
     GROUP_CONCAT(words ORDER BY RAND() SEPARATOR ',')
     FROM (SELECT 'title' as words UNION SELECT 'origin' UNION SELECT 'description' UNION SELECT 'objective' UNION SELECT 'reward') as words_table;

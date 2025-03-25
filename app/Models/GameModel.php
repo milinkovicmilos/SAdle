@@ -36,15 +36,11 @@ class GameModel extends Model
         return $result;
     }
 
-    public function retrieveCurrentMissionId($missionNumber): mixed
+    public function retrieveCurrentMissionId(string $attributeType): int
     {
-        $map = [
-            1 => "title_mission_id",
-            2 => "origin_mission_id",
-            3 => "giver_mission_id",
-        ];
+        $columnName = $attributeType . "_mission_id";
         return $this->dbc->fetchPrepared(
-            "SELECT $map[$missionNumber] as id FROM games WHERE game_date = ?",
+            "SELECT $columnName as id FROM games WHERE game_date = ?",
             [$this->retrieveCurrentDate()]
         )[0]->id;
     }
