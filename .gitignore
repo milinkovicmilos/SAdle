@@ -22,8 +22,5 @@
 /.config/webserver-root/*
 !/.config/webserver-root/.gitkeep
 
-/.config/vhosts/*
-!/.config/vhosts/.gitkeep
-
 /.data/mysql/*
 !/.data/mysql/.gitkeep
