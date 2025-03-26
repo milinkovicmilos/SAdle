@@ -20,6 +20,9 @@ class Router
         $this->addRoute(RequestMethod::GET, "/GetMissionTitles", \App\Controllers\MissionController::class, "getMissionTitles");
         $this->addRoute(RequestMethod::GET, "/GetMissionGivers", \App\Controllers\MissionGiverController::class, "getMissionGivers");
         $this->addRoute(RequestMethod::GET, "/GetMissionOrigins", \App\Controllers\MissionOriginController::class, "getMissionOrigins");
+        $this->addRoute(RequestMethod::POST, "/MissionTitleGuess", \App\Controllers\GameController::class, "missionTitleGuess");
+        $this->addRoute(RequestMethod::POST, "/MissionOriginGuess", \App\Controllers\GameController::class, "missionOriginGuess");
+        $this->addRoute(RequestMethod::POST, "/MissionGiverGuess", \App\Controllers\GameController::class, "missionGiverGuess");
     }
 
     public function addRoute(RequestMethod $method, string $route, string $controller, string $action): void

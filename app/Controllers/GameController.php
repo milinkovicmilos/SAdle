@@ -112,12 +112,13 @@ class GameController extends Controller
             $data = [
                 "message" => "Error in processing radio guess."
             ];
+            http_response_code(500);
         }
         header("Content-type: application/json");
         echo json_encode($data);
     }
 
-    public function getMissionClues(int $clueNumber, string $attributeToGuess): array
+    private function getMissionClue(int $clueNumber, string $attributeToGuess): array
     {
         $missionsModel = new MissionModel();
         $missionGameCluesModel = new MissionGameCluesModel();
@@ -126,8 +127,13 @@ class GameController extends Controller
 
         $cluesOrder = $missionGameCluesModel->retrieveMissionClueOrder($currentGameId, $attributeToGuess);
         $cluesOrder = str_replace(',', '","', $cluesOrder);
+        $cluesOrder = json_decode('["' . $cluesOrder . '"]');
 
-        $clueName = json_decode('["' . $cluesOrder . '"]')[$clueNumber - 1];
+        if ($clueNumber > count($cluesOrder)) {
+            return [];
+        }
+
+        $clueName = $cluesOrder[$clueNumber - 1];
 
         $missionId = $this->model->retrieveCurrentMissionId($attributeToGuess);
         $value = $missionsModel->retrieveMissionInfo($clueName, $missionId);
@@ -143,13 +149,138 @@ class GameController extends Controller
     {
         try {
             $data = [];
-            $data[] = $this->getMissionClues(1, "title");
-            $data[] = $this->getMissionClues(1, "origin");
-            $data[] = $this->getMissionClues(1, "giver");
+            $data[] = $this->getMissionClue(1, "title");
+            $data[] = $this->getMissionClue(1, "origin");
+            $data[] = $this->getMissionClue(1, "giver");
         } catch (\PDOException | \Exception | \Error $e) {
             $data = [
-                "message" => "Error in processing radio guess."
+                "message" => "Error in getting initial mission clues."
             ];
+            http_response_code(500);
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
+
+    private function handleMissionGuess(string $attributeToGuess, int $guessNumber, bool $correct, int $missionId): array
+    {
+        $missionModel = new MissionModel();
+        $clues = [];
+
+        if ($correct) {
+            $missionAttributes = $missionModel->retrieveAllMissionAttributes($missionId);
+            foreach ($missionAttributes as $key => $value) {
+                $clues[] = [
+                    "attributeToGuess" => $attributeToGuess,
+                    "elementClass" => $key,
+                    "value" => $value,
+                ];
+            }
+
+            return [
+                "correct" => $correct,
+                "clues" => $clues,
+            ];
+        }
+
+        $clues[] = $this->getMissionClue($guessNumber + 1, $attributeToGuess);
+        if ($clues === [[]]) {
+            $clues = [];
+        }
+
+        return [
+            "correct" => $correct,
+            "clues" => $clues,
+        ];
+    }
+
+    public function missionTitleGuess(): void
+    {
+        try {
+            // Validation
+            if (!property_exists($this->json, "id") || empty($this->json->id) || !is_numeric($this->json->id)) {
+                throw new Exception("Submitted Radio ID is invalid.");
+            }
+
+            if (!property_exists($this->json, "guessNumber") || empty($this->json->guessNumber) || !is_numeric($this->json->guessNumber)) {
+                throw new Exception("Submitted guessNumber is invalid");
+            }
+
+            $submittedMissionId = $this->json->id;
+            $guessNumber = $this->json->guessNumber;
+
+            $currentTitleMissionId = $this->model->retrieveCurrentTitleMissionId();
+            $correct = $currentTitleMissionId == $submittedMissionId;
+            $data = $this->handleMissionGuess("title", $guessNumber, $correct, $currentTitleMissionId);
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error in processing guess."
+            ];
+            http_response_code(500);
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
+
+    public function missionOriginGuess(): void
+    {
+        try {
+            // Validation
+            if (!property_exists($this->json, "id") || empty($this->json->id) || !is_numeric($this->json->id)) {
+                throw new Exception("Submitted Radio ID is invalid.");
+            }
+
+            if (!property_exists($this->json, "guessNumber") || empty($this->json->guessNumber) || !is_numeric($this->json->guessNumber)) {
+                throw new Exception("Submitted guessNumber is invalid");
+            }
+
+            $submittedOriginId = $this->json->id;
+            $guessNumber = $this->json->guessNumber;
+
+            $missionModel = new MissionModel();
+
+            $currentOriginMissionId = $this->model->retrieveCurrentOriginMissionId();
+            $currentOriginId = $missionModel->retrieveMissionOriginId($currentOriginMissionId);
+
+            $correct = $currentOriginId == $submittedOriginId;
+            $data = $this->handleMissionGuess("origin", $guessNumber, $correct, $currentOriginMissionId);
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error in processing guess."
+            ];
+            http_response_code(500);
+        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+    }
+
+    public function missionGiverGuess(): void
+    {
+        try {
+            // Validation
+            if (!property_exists($this->json, "id") || empty($this->json->id) || !is_numeric($this->json->id)) {
+                throw new Exception("Submitted Radio ID is invalid.");
+            }
+
+            if (!property_exists($this->json, "guessNumber") || empty($this->json->guessNumber) || !is_numeric($this->json->guessNumber)) {
+                throw new Exception("Submitted guessNumber is invalid");
+            }
+
+            $submittedGiverId = $this->json->id;
+            $guessNumber = $this->json->guessNumber;
+
+            $missionModel = new MissionModel();
+
+            $currentGiverMissionId = $this->model->retrieveCurrentGiverMissionId();
+            $currentGiverId = $missionModel->retrieveMissionGiverId($currentGiverMissionId);
+
+            $correct = $currentGiverId == $submittedGiverId;
+            $data = $this->handleMissionGuess("giver", $guessNumber, $correct, $currentGiverMissionId);
+        } catch (\PDOException | \Exception | \Error $e) {
+            $data = [
+                "message" => "Error in processing guess."
+            ];
+            http_response_code(500);
         }
         header("Content-type: application/json");
         echo json_encode($data);

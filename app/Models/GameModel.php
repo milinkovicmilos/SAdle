@@ -44,4 +44,28 @@ class GameModel extends Model
             [$this->retrieveCurrentDate()]
         )[0]->id;
     }
+
+    public function retrieveCurrentTitleMissionId(): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT title_mission_id as id FROM games WHERE game_date = ?",
+            [$this->retrieveCurrentDate()]
+        )[0]->id;
+    }
+
+    public function retrieveCurrentOriginMissionId(): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT origin_mission_id as id FROM games WHERE game_date = ?",
+            [$this->retrieveCurrentDate()]
+        )[0]->id;
+    }
+
+    public function retrieveCurrentGiverMissionId(): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT giver_mission_id as id FROM games WHERE game_date = ?",
+            [$this->retrieveCurrentDate()]
+        )[0]->id;
+    }
 }

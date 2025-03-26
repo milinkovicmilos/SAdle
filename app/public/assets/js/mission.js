@@ -93,24 +93,35 @@ const handleSubmit = function(attributeName, value, text) {
     searchOptions.parentElement.previousSibling.value = "";
     searchOptions.remove();
 
-    const guessObj = {
-        "attributeToGuess": attributeName,
-        "id": Number(value),
-        "text": text,
-    };
-    addGameGuess(guessObj);
-
     const guessNumber = getGameGuesses().filter(x => x.attributeToGuess === attributeName).length;
     const data = {
         id: Number(value),
-        guessNumber: guessNumber,
+        guessNumber: guessNumber + 1,
     };
 
     const endpoint = `Mission${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}Guess`;
 
     postJSON(endpoint, data)
         .then((json) => {
-            console.log(json);
+            renderGuess(attributeName, text, json.correct);
+            if (json.correct) {
+                const attribute = missionElement.querySelector(`.${attributeName}`);
+                attribute.innerHTML = "";
+                setMissionStatus(attributeName, true);
+            }
+
+            const guessObj = {
+                "attributeToGuess": attributeName,
+                "id": Number(value),
+                "text": text,
+                "correct": json.correct,
+            };
+            addGameGuess(guessObj);
+
+            for (const clueObj of json.clues) {
+                addGameClue(clueObj);
+                renderSingleClue(clueObj);
+            }
         })
         .catch(() => {
             displayError("Error while submitting mission guess... Please try again later.");
@@ -187,7 +198,7 @@ const renderSingleClue = function(clueObj) {
 
 function missionRenderGuesses(guessesArr) {
     for (const guessObj of guessesArr) {
-        renderGuess(guessObj.attributeToGuess, guessObj.text, guessObj.isCorrect);
+        renderGuess(guessObj.attributeToGuess, guessObj.text, guessObj.correct);
     }
 }
 
@@ -201,7 +212,7 @@ function renderGuess(attributeName, text, isCorrect) {
     } else {
         const previousGuess = document.querySelector(`.guess-${attributeName}`);
         const guess = document.createElement("div");
-        guess.classList.add("container-sm", "bg-danger", "text-light", "my-2", `guess-${attributeName}`);
+        guess.classList.add("container-sm", "bg-danger", "text-light", "my-2", "guess", `guess-${attributeName}`);
         guess.textContent = text;
 
         previousGuess ? missionElement.parentElement.insertBefore(guess, previousGuess) : missionElement.after(guess);
@@ -226,5 +237,30 @@ async function missionStart() {
 }
 
 function missionReset() {
+    const missionTitle = document.querySelector("#mission-title");
+    const missionOrigin = document.querySelector("#mission-origin");
+    const missionGiver = document.querySelector("#mission-giver");
 
+    const missionTitleElements = missionTitle.querySelectorAll("tbody tr:nth-child(2) td");
+    for (const element of missionTitleElements) {
+        element.classList.remove("bg-success");
+        element.textContent = "?";
+    }
+
+    const missionOriginElements = missionOrigin.querySelectorAll("tbody tr:nth-child(2) td");
+    for (const element of missionOriginElements) {
+        element.classList.remove("bg-success");
+        element.textContent = "?";
+    }
+
+    const missionGiverElements = missionGiver.querySelectorAll("tbody tr:nth-child(2) td");
+    for (const element of missionGiverElements) {
+        element.classList.remove("bg-success");
+        element.textContent = "?";
+    }
+
+    const guesses = document.querySelectorAll(".guess");
+    for (const guess of guesses) {
+        guess.remove();
+    }
 }

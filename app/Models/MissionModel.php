@@ -29,4 +29,42 @@ class MissionModel extends Model
     {
         return $this->dbc->fetchPrepared("SELECT id, title FROM missions", []);
     }
+
+    public function retrieveMissionOriginId(int $missionId): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT origin_id as id FROM missions WHERE id = ?",
+            [$missionId]
+        )[0]->id;
+    }
+
+    public function retrieveMissionGiverId(int $missionId): int
+    {
+        return $this->dbc->fetchPrepared(
+            "SELECT giver_id as id FROM missions WHERE id = ?",
+            [$missionId]
+        )[0]->id;
+    }
+
+    public function retrieveAllMissionAttributes(int $missionId): object
+    {
+        return $this->dbc->fetchPrepared(
+            <<<SQL
+                SELECT
+                    title,
+                    description,
+                    objective,
+                    (
+                        SELECT name FROM mission_origins WHERE id = m.origin_id
+                    ) as origin,
+                    (
+                        SELECT name FROM mission_givers WHERE id = m.giver_id
+                    ) as giver,
+                    reward
+                FROM missions m
+                WHERE id = ?;
+            SQL,
+            [$missionId]
+        )[0];
+    }
 }
