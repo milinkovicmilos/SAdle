@@ -19,14 +19,36 @@ const renderSearch = function(dataArr, attributeName) {
     input.classList.add("search-input", "form-control");
     input.addEventListener("keyup", handleSearchInput.bind(input, dataArr, attributeName));
     input.addEventListener("keydown", (event) => {
-        if (event.code === "Enter") {
-            const selectedOption = missionElement.querySelector(".selected-option");
-            if (selectedOption) {
-                const attribute = selectedOption.dataset.attribute;
-                const value = selectedOption.dataset.value;
-                const text = selectedOption.textContent;
-                handleSubmit(attribute, value, text);
-            }
+        const selectedOption = missionElement.querySelector(".selected-option");
+        switch (event.code) {
+            case "Enter":
+                if (selectedOption) {
+                    const attribute = selectedOption.dataset.attribute;
+                    const value = selectedOption.dataset.value;
+                    const text = selectedOption.textContent;
+                    handleSubmit(attribute, value, text);
+                    break;
+                }
+            case "ArrowUp":
+                event.preventDefault();
+                if (selectedOption) {
+                    const previousOption = selectedOption.previousSibling;
+                    if (previousOption) {
+                        previousOption.classList.add("selected-option");
+                        selectedOption.classList.remove("selected-option");
+                    }
+                }
+                break;
+            case "ArrowDown":
+                event.preventDefault();
+                if (selectedOption) {
+                    const nextOption = selectedOption.nextSibling;
+                    if (nextOption) {
+                        nextOption.classList.add("selected-option");
+                        selectedOption.classList.remove("selected-option");
+                    }
+                }
+                break;
         }
     });
 
@@ -35,7 +57,12 @@ const renderSearch = function(dataArr, attributeName) {
     missionElement.classList.add("position-relative");
 }
 
-const handleSearchInput = function(dataArr, attributeName) {
+const handleSearchInput = function(dataArr, attributeName, event) {
+    const ignoreCodes = ["ArrowUp", "ArrowDown"];
+    if (ignoreCodes.includes(event.code)) {
+        return;
+    }
+
     let searchOptions = this.nextSibling;
     const text = this.value;
     if (text === "") {
