@@ -29,7 +29,7 @@ $csp = str_replace("\n", "", $csp);
 header($csp);
 
 if ($route == '/')
-    $route = '/radio';
+    $route = '/mission';
 
 $res = $router->matchRoute(RequestMethod::from($method), $route);
 if ($res) {

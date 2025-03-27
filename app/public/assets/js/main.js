@@ -1,7 +1,7 @@
 const getGameName = function() {
     let path = window.location.pathname;
     if (path == '/') {
-        path = "/radio";
+        path = "/mission";
     }
 
     return path.split('/')[1];
