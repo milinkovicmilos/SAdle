@@ -1,12 +1,13 @@
 services:
   webserver:
     container_name: "webserver"
-    build: .images/php
+    build:
+      context: .
+      dockerfile: .images/php/Dockerfile
     ports:
       - "127.0.0.1:8080:80"
     volumes:
       - .config/webserver-root:/root
-      - ./:/var/www/html:rw
       - .config/vhosts:/etc/apache2/sites-enabled
   mariadb:
     container_name: "mariadb"

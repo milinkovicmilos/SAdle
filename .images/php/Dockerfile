@@ -11,3 +11,9 @@ RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
 RUN docker-php-ext-install pdo_mysql
 
 RUN a2enmod rewrite
+
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install --no-dev --optimize-autoloader
