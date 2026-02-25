@@ -1,9 +1,12 @@
-FROM php:apache
+FROM php:8.4-apache
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip
 
-RUN rm composer-setup.php
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && rm composer-setup.php
 
 RUN docker-php-ext-install pdo_mysql
 
