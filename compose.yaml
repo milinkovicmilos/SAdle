@@ -8,16 +8,25 @@ services:
       - .config/webserver-root:/root
       - ./:/var/www/html:rw
       - .config/vhosts:/etc/apache2/sites-enabled
+    env_file:
+      - .env.docker
+
   mariadb:
     container_name: "mariadb"
-    image: "mariadb:latest"
+    build: .images/mariadb
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
       - .config/mariadb-root:/root
       - .data/mysql:/var/lib/mysql
+      - ./utils/setup_database.sql:/root/setup_database.sql
+      - ./utils/template_add_starting_games.sql:/root/template_add_starting_games.sql
+      - ./utils/template_add_game.sql:/root/template_add_game.sql
+    env_file:
+      - .env.docker
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:latest
