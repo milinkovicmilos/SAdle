@@ -13,19 +13,26 @@ services:
 
   mariadb:
     container_name: "mariadb"
-    build: .images/mariadb
+    image: "mariadb:latest"
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
       - .config/mariadb-root:/root
-      - .data/mysql:/var/lib/mysql
-      - ./utils/setup_database.sql:/root/setup_database.sql
-      - ./utils/template_add_starting_games.sql:/root/template_add_starting_games.sql
-      - ./utils/template_add_game.sql:/root/template_add_game.sql
+      - mariadb-data:/var/lib/mysql
     env_file:
       - .env.docker
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+
+  db-maintenance:
+      container_name: "db-maintenance"
+      build: .images/db-maintenance
+      volumes:
+        - ./utils/setup_database.sql:/root/setup_database.sql
+        - ./utils/template_add_starting_games.sql:/root/template_add_starting_games.sql
+        - ./utils/template_add_game.sql:/root/template_add_game.sql
+      env_file:
+        - .env.docker
 
   phpmyadmin:
     container_name: phpmyadmin
@@ -35,3 +42,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=
       - PMA_HOST=mariadb
+
+volumes:
+  mariadb-data:
